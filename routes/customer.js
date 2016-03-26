@@ -1,4 +1,4 @@
-    /* 
+/* 
  * Registration module
  *
  * @module      :: Routes
@@ -14,6 +14,7 @@ var relationship = require("mongoose-relationship");
 var Login = require('../models/login');
 var utils = require('../lib/utils');
 var Verification = require('../models/verfication.js');
+var SocialAuth = require('../models/socialauth.js');
 var common = require('../lib/common');
 var moment = require('moment');
 var logger = require('../lib/logger');
@@ -98,12 +99,12 @@ newRegister = function (req, res) {
                                 }
                             });
                         } else
-                            res.send({status:"failed"});
+                            res.send({status: "failed"});
                     });
                 }
 
             });
-        } else{
+        } else {
             var customer = new Customer({
                 first_name: req.body.name,
                 email: {primary_email: {email_id: req.body.email}},
@@ -121,10 +122,10 @@ newRegister = function (req, res) {
                         type: "mobile",
                         created: moment()
                     });
-                    verify.save(function(err,saved){
-                        if(saved){
+                    verify.save(function (err, saved) {
+                        if (saved) {
                             logger.info("Verification code sent: " + verify.verification_code);
-                         
+
                             var mobileNumber = verify.primary_contact;
                             utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
                                 if (err) {
@@ -134,17 +135,17 @@ newRegister = function (req, res) {
                                 }
                             });
                             res.send({status: 'success', customer: customer});
-                        }else {
+                        } else {
                             logger.info('Error while creating verification object: ' + err);
-                        }                            
+                        }
                     });
                 } else
-                    res.send({status:"failed"});
+                    res.send({status: "failed"});
             });
         }
     });
 
-    
+
 };
 
 
@@ -218,8 +219,8 @@ validateUser = function (req, res) {
                         res.send({status: "success"});
                     }
                 });
-            } 
-          else  if (user.contact.primary_contact.contact_no === req.body.mobile){
+            }
+            else if (user.contact.primary_contact.contact_no === req.body.mobile) {
                 Login.findOne({ref_id: user._id}, function (err, result) {
                     if (result) {
                         res.send({status: "failure", message: "mobile number already exists"});
@@ -245,6 +246,22 @@ removeUser = function (req, res) {
             res.send({status: "failed to delete"});
     });
 };
+
+getAuthDetail = function (req, res)
+{
+    SocialAuth.findOne({_id: req.params.id}, function (err, authdetail)
+    {
+        if (err)
+            res.send({error: err});
+        if (authdetail)
+        {
+            res.send({status: 'success', detail: authdetail});
+        }
+
+
+    });
+};
+
 module.exports.route = function (router) {
     router.post('/customer', newRegister);
     router.get('/customers', getAllUsers);
@@ -252,6 +269,7 @@ module.exports.route = function (router) {
     router.post('/modifycustomer', authenticate, modifyUser);
     router.post('/customer/validate', validateUser);
     router.get('/customer/remove/:id', removeUser);
+    router.get('/socialauth/:id', getAuthDetail);
 };
 
 

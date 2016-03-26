@@ -17,15 +17,16 @@ module.exports = function () {
                 GOOGLE_CREDENTIALS: {
                     'clientID': '614748459278-lg8p9er3d5n7l6co77b7bs9kfm9p2hvc.apps.googleusercontent.com',
                     'clientSecret': '9zwio4nnjKiDoxRr0GyUQcyW',
-                    'callbackURL': 'http://www.viaetruck.in:8080/auth/google/callback'
+                    'callbackURL': 'http://www.viaetruck.com:8080/auth/google/callback'
                 },
                 FACEBOOK_CREDENTIALS: {
-                    'appId': '468580070017731',
-                    'appSecret': '5744d26a023f7190c363c677bbb70c08',
+                    'appId': '468959609979777',
+                    'appSecret': 'b8baaa5a0e2a9e48806dad1c9f43790d',
                     'host': 'http://www.viaetruck.com:8080/auth/facebook/callback'
 
                 },
-                SUCCESS_URL: "http://www.viaetruck.in/stdusr/#/",
+                SUCCESS_URL: "http://www.viaetruck.com/socialauth/success/",
+                FAILURE_URL: "http://www.viaetruck.com/socialauth/failure",
                 SMS_GATEWAY_DETAILS: {
                     USER_ID: 'viaetruck',
                     PASSWORD: 'welcome123',

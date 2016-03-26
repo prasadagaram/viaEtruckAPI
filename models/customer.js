@@ -89,7 +89,7 @@ var CustomerSchema = new Schema({
     address: [{_id: false, address_name: {type: String}, address_data: {address1: {type: String}, address2: {type: String}, area: {type: String}, city: {type: String}, state: {type: String}, pincode: {type: String}, landmark: {type: String}}}],
     dob: Date,
     profilepic_url:{type:String},
-    //in case of fb / google register 
+    //in case of fb / google register use socialauth model id
     ref_id: {
         type : String
         //unique: true
