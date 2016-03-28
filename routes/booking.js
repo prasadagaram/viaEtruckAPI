@@ -88,7 +88,7 @@ bookQuote = function (req, res) {
                                             quote.save(function (err, saved) {
                                                 console.log(err);
                                                 if (saved) {
-                                                    console.log(saved);
+                                                    console.log(saved._id);
                                                     res.send({status: "success", quote:saved._id});
                                                 } else {
                                                     res.send({status: "failure", message: "quote generation failed"});
