@@ -13,7 +13,6 @@ require('./truck').route(router);
 require('./login').route(router);
 require('./triptimeslot').route(router);
 require('./booking').route(router);
-require('./testing').route(router);
 require('./pricing').route(router);
 require('./payment').route(router);
 module.exports = router;

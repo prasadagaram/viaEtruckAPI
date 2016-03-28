@@ -65,7 +65,7 @@ bookQuote = function (req, res) {
                                     pricing_details: {$elemMatch: {from_city: booked.pickup_address.city_name,to_city:booked.drop_address.city_name}}
 
                         };
-                        console.log(query);
+                        //console.log(query);
                         Pricings.findOne(query, function (err, pricing) {
                             console.log("************");
                             console.log(pricing);
@@ -103,7 +103,8 @@ bookQuote = function (req, res) {
                             }else {
                                 Bookings.update({_id: booked._id}, {status: "not-available"}, function (err, updated) {
                                     if (updated) {
-                                        console.log(updated);
+                                        console.log("updated");
+                                        console.log(updated._id);
                                         res.send({status: "success", quote:updated._id});
                                     } else {
                                         res.send({status: "failure", message: "quote generation failed"});
