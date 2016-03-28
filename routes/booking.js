@@ -88,6 +88,7 @@ bookQuote = function (req, res) {
                                             quote.save(function (err, saved) {
                                                 console.log(err);
                                                 if (saved) {
+                                                    console.log(saved);
                                                     res.send({status: "success", quote:saved._id});
                                                 } else {
                                                     res.send({status: "failure", message: "quote generation failed"});
@@ -102,6 +103,7 @@ bookQuote = function (req, res) {
                             }else {
                                 Bookings.update({_id: booked._id}, {status: "not-available"}, function (err, updated) {
                                     if (updated) {
+                                        console.log(updated);
                                         res.send({status: "success", quote:updated._id});
                                     } else {
                                         res.send({status: "failure", message: "quote generation failed"});

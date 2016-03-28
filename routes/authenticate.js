@@ -21,7 +21,7 @@ module.exports = function(app, passport) {
     // the callback after google has authenticated the user
     app.get('/auth/google/callback',
             passport.authenticate('google'), function(req,res){
-                res.redirect(configAuth.SUCCESS_URL + req.user._id);
+                res.redirect(configAuth.SUCCESS_URL + req.user._id + "/");
             });
     
     // =====================================
@@ -35,7 +35,7 @@ module.exports = function(app, passport) {
     app.get('/auth/facebook/callback',
         passport.authenticate('facebook'), function(req,res){
                 if (req.user !== null){
-                    res.redirect(configAuth.SUCCESS_URL + req.user._id);
+                    res.redirect(configAuth.SUCCESS_URL + req.user._id + "/");
                 }
                 else
                     res.redirect("/failed"); //for facebook users having inactive email-id
