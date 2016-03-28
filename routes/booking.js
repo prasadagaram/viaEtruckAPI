@@ -88,8 +88,8 @@ bookQuote = function (req, res) {
                                             quote.save(function (err, saved) {
                                                 console.log(err);
                                                 if (saved) {
-                                                    console.log(saved._id);
-                                                    res.send({status: "success", quote:saved._id});
+                                                    console.log(new booking);
+                                                    res.send({status: "success", booking:booked._id});
                                                 } else {
                                                     res.send({status: "failure", message: "quote generation failed"});
                                                 }
@@ -100,12 +100,12 @@ bookQuote = function (req, res) {
 
                                 });
 
-                            }else {
+                            }   else {
                                 Bookings.update({_id: booked._id}, {status: "not-available"}, function (err, updated) {
                                     if (updated) {
                                         console.log("updated");
-                                        console.log(updated._id);
-                                        res.send({status: "success", quote:updated._id});
+                                        //console.log(booked._id);
+                                        res.send({status: "success", quote:booked._id});
                                     } else {
                                         res.send({status: "failure", message: "quote generation failed"});
                                     }
