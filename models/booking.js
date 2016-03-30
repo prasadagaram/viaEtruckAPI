@@ -45,20 +45,12 @@ var BookingSchema = new Schema({
         ref: 'TruckType'
     },
     
-    load_details:[{
-        customer_id : {
-            id:{
-                type: Schema.Types.ObjectId 
-            }
-        },
-        size : String,
+    load_details:{
+               
         weight: String,
-        checklist: {
-            id:{
-                type: Schema.Types.ObjectId 
-            }
-        }       
-    }],
+        material_type:   String
+               
+    },
     customer_details:[{
         customer_id:{
             type: Schema.Types.ObjectId,

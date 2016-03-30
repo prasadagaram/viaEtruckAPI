@@ -7,6 +7,7 @@
  */
 var utils = require('../lib/utils');
 var Verification = require('../models/verfication.js');
+var Customer = require('../models/customer');
 var common = require('../lib/common');
 var moment = require('moment');
 var logger = require('../lib/logger');
@@ -95,6 +96,10 @@ var sendVerificationCode = function (req, res) {
 
     });
 };
+
+
+
+
 module.exports.route = function (router) {
     router.post('/user/verify', verifyUser);
 };

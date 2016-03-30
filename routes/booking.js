@@ -40,6 +40,10 @@ bookQuote = function (req, res) {
                     customer_details: {
                         customer_id: customer._id
                     },
+                    load_details:{
+                        weight:req.body.weight,
+                        material_type: req.body.material_type
+                    },
                     booked_on: moment(),
                     trip_date: req.body.date,
                     trip_time: req.body.time,

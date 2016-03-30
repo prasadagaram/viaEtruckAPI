@@ -24,7 +24,8 @@ var VerificationSchema = new Schema({
     },
     created: {
         type: Date,
-        required: true
+        required: true,
+        default:Date.now()
     },
     type: {
         type: String,

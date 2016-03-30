@@ -20,143 +20,16 @@ var moment = require('moment');
 var logger = require('../lib/logger');
 var authenticate = require('../middleware/authentication');
 
-// New User Registeration API
-//newRegister = function (req, res) {
-//
-//    Customer.findOne({$or:
-//                [{"email.primary_email.email_id": req.body.email},
-//                    {"contact.primary_contact.contact_no": req.body.contact}]
-//    }, function (err, customer) {
-//        //console.log(customer);
-//        if (customer) {
-//
-//            Login.findOne({ref_id: customer._id}, function (err, login) {
-//                if (login) {
-//                    res.send({status: "failed", message: "user already exists"});
-//                } else {
-//                    console.log("else condition");
-////                    customer.first_name = req.body.name;
-////                    customer.email.primary_email.email_id = req.body.email;
-////                    customer.contact.primary_contact.contact_no = req.body.contact;
-//                    Customer.update({"_id": customer._id}, {
-//                        first_name: req.body.name,
-//                        "email.primary_email.email_id": req.body.email,
-//                        "contact.primary_contact.contact_no": req.body.contact
-//                    }, function (err, updated) {
-//                        console.log(updated);
-//                        if (updated) {
-//                            var code = common.generateRandomNumber(10000, 99999);
-//                            var verify = new Verification({
-//                                primary_contact: customer.contact.primary_contact.contact_no,
-//                                verification_code: code,
-//                                type: "mobile",
-//                                created: moment()
-//                            });
-//                            Verification.findOne({
-//                                primary_contact: verify.primary_contact}, function (err, verificationModel) {
-//                                if (err) {
-//                                    //errorHandler.sendServerError(res, err);
-//                                } else {
-//                                    console.log("else in verification");
-//                                    var newCodeTobeSent = true;
-//                                    if (verificationModel) {
-//                                        // Check expiry time
-//                                        var expiry = moment(verificationModel.created).add(5, 'm');
-//                                        if (moment().isBefore(expiry)) {
-//                                            // Code expired, retry again
-//                                            logger.info("Resending old verification code");
-//                                            var mobileNumber = verify.primary_contact;
-//                                            utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verificationModel.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
-//                                                if (err) {
-//                                                    logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
-//                                                } else {
-//                                                    logger.info('Successfully sent verification code');
-//                                                }
-//                                            });
-//                                            newCodeTobeSent = false;
-//                                            return res.send({status: 'success', customer: customer});
-//                                        }
-//
-//                                    }
-//
-//                                    if (newCodeTobeSent) {
-//                                        Verification.update({primary_contact: verify.primary_contact}, {$set: verify.toObject()}, {upsert: true}, function (err) {
-//                                            if (!err) {
-//                                                // Send the verification code via sms
-//                                                logger.info("Verification code sent: " + verify.verification_code);
-//                                                var mobileNumber = verify.primary_contact;
-//                                                utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
-//                                                    if (err) {
-//                                                        logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
-//                                                    } else {
-//                                                        logger.info('Successfully sent verification code');
-//                                                    }
-//                                                });
-//                                                return res.send({status: 'success', customer: customer});
-//                                            } else {
-//                                                logger.info('Error while creating verification object: ' + err);
-//                                                // errorHandler.sendServerError(res, err);
-//                                            }
-//                                        });
-//                                    }
-//
-//                                }
-//                            });
-//                        } else
-//                            res.send({status: "failed"});
-//                    });
-//                }
-//
-//            });
-//        } else {
-//            var customer = new Customer({
-//                first_name: req.body.name,
-//                email: {primary_email: {email_id: req.body.email}},
-//                contact: {primary_contact: {contact_no: req.body.contact}},
-//                created_on: new Date(),
-//                activation_status: 'active'
-//            });
-//            customer.save(function (err, saved) {
-//                if (saved) {
-//                    console.log(saved);
-//                    var code = common.generateRandomNumber(10000, 99999);
-//                    var verify = new Verification({
-//                        primary_contact: customer.contact.primary_contact.contact_no,
-//                        verification_code: code,
-//                        type: "mobile",
-//                        created: moment()
-//                    });
-//                    verify.save(function (err, saved) {
-//                        if (saved) {
-//                            logger.info("Verification code sent: " + verify.verification_code);
-//
-//                            var mobileNumber = verify.primary_contact;
-//                            utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
-//                                if (err) {
-//                                    logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
-//                                } else {
-//                                    logger.info('Successfully sent verification code');
-//                                }
-//                            });
-//                            res.send({status: 'success', customer: customer});
-//                        } else {
-//                            logger.info('Error while creating verification object: ' + err);
-//                        }
-//                    });
-//                } else
-//                    res.send({status: "failed"});
-//            });
-//        }
-//    });
-//
-//
-//};
-
-
-
 //new Resgistration function all
 
 registerNewUser = function (req, res) {
+    var code = common.generateRandomNumber(100000, 999999);
+    mobileNumber = req.body.contact;
+    var verify = new Verification({
+        primary_contact: req.body.contact,
+        verification_code: code,
+        type: "mobile"
+    });
     Customer.findOne({
         $or:
                 [{"email.primary_email.email_id": req.body.email},
@@ -174,16 +47,10 @@ registerNewUser = function (req, res) {
 
             customer.save(function (err, saved) {
                 if (saved) {
-                    var code = common.generateRandomNumber(100000, 999999);
-                    var verify = new Verification({
-                        primary_contact: customer.contact.primary_contact.contact_no,
-                        verification_code: code,
-                        type: "mobile",
-                        created: moment()
-                    });
+
                     verify.save(function (err, saved) {
                         if (saved) {
-                            logger.info("Verification code sent: " + verify.verification_code);
+                            logger.info("Verification code : " + verify.verification_code);
 
                             var mobileNumber = verify.primary_contact;
                             utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
@@ -221,12 +88,11 @@ registerNewUser = function (req, res) {
                             var code = common.generateRandomNumber(100000, 999999);
                             Verification.findOne({primary_contact: req.body.contact}, function (err, verified) {
                                 if (verified) {
-                                    Verification.update({primary_contact: req.body.contact},
-                                            {verification_code: code}, function (err, updateverification) {
+                                    Verification.update({primary_contact: verify.primary_contact}, {verification_code: code}, {upsert: true}, function (err, updateverification) {
                                         if (updateverification) {
-                                            logger.info("Verification code sent: " + code);
+                                            logger.info("Verification code : " + code);
 
-                                            var mobileNumber = updated.primary_contact;
+                                            //var mobileNumber = updated.primary_contact;
                                             utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + code + '' + ' www.VIAETRUCK.com', function (err, result) {
                                                 if (err) {
                                                     logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
@@ -234,21 +100,16 @@ registerNewUser = function (req, res) {
                                                     logger.info('Successfully sent verification code');
                                                 }
                                             });
-                                            res.send({status: "success", verification_id: updated._id});
+                                            res.send({status: "success", verification_id: verified._id});
                                         } else {
                                             console.log("update Verification fails");
                                         }
                                     });
-                                } else {
-                                    var verify = new Verification({
-                                        primary_contact: customer.contact.primary_contact.contact_no,
-                                        verification_code: code,
-                                        type: "mobile",
-                                        created: moment()
-                                    });
+                                }else {
+                                    
                                     verify.save(function (err, saved) {
                                         if (saved) {
-                                            logger.info("Verification code sent: " + verify.verification_code);
+                                            logger.info("Verification code : " + verify.verification_code);
 
                                             var mobileNumber = verify.primary_contact;
                                             utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
@@ -288,10 +149,12 @@ resendOtp = function (req, res) {
     });
     Verification.findOne({primary_contact: req.body.contact}, function (err, verified) {
         if (verified) {
-            Verification.update({primary_contact: req.body.contact}, {verification_code: code}, function (err, updated) {
+            Verification.update({primary_contact: req.body.contact},  {verification_code: code}, {upsert: true}, function (err, updated) {
                 if (updated) {
                     Customer.findOne({"contact.primary_contact.contact_no": mobileNumber}, function (err, customer) {
+                        console.log(customer);
                         if (customer) {
+                            logger.info("Verification code : " + verify.verification_code);
 
                             utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
                                 if (err) {
@@ -300,9 +163,9 @@ resendOtp = function (req, res) {
                                     logger.info('Successfully sent verification code');
                                 }
                             });
-                            res.send({status: "success", verification_id: updated._id});
+                            res.send({status: "success", verification_id: verified._id});
                         } else {
-                            res.send({status:"failed",message:"customer not found"});
+                            res.send({status: "failed", message: "customer not found"});
                         }
                     });
                 } else {
@@ -314,6 +177,8 @@ resendOtp = function (req, res) {
                 if (saved) {
                     Customer.findOne({"contact.primary_contact.contact_no": saved.primary_contact}, function (err, customer) {
                         if (customer) {
+                            logger.info("Verification code : " + verify.verification_code);
+
                             utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
                                 if (err) {
                                     logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
@@ -322,9 +187,8 @@ resendOtp = function (req, res) {
                                 }
                             });
                             res.send({status: "success", verification_id: saved._id});
-                        }
-                        else{
-                            res.send({status:"failure",message:"customer not found"});
+                        } else {
+                            res.send({status: "failure", message: "customer not found"});
                         }
 
                     });
@@ -456,7 +320,7 @@ getAuthDetail = function (req, res)
 
 module.exports.route = function (router) {
     router.post('/customer', registerNewUser);
-    router.post('/otp/resend',resendOtp);
+    router.post('/otp/resend', resendOtp);
     router.get('/customers', getAllUsers);
     router.get('/customer/:id', getUserById);
     router.post('/modifycustomer', authenticate, modifyUser);
