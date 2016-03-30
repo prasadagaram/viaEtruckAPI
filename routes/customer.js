@@ -193,7 +193,7 @@ registerNewUser = function (req, res) {
                                     logger.info('Successfully sent verification code');
                                 }
                             });
-                            res.send({status: 'success', customer: customer});
+                            res.send({status: 'success', verification_id: saved._id});
                         } else {
                             logger.info('Error while creating verification object: ' + err);
                         }
@@ -234,7 +234,7 @@ registerNewUser = function (req, res) {
                                                     logger.info('Successfully sent verification code');
                                                 }
                                             });
-                                            res.send({status: "success", customer: customer});
+                                            res.send({status: "success", verification_id: updated._id});
                                         } else {
                                             console.log("update Verification fails");
                                         }
@@ -258,7 +258,7 @@ registerNewUser = function (req, res) {
                                                     logger.info('Successfully sent verification code');
                                                 }
                                             });
-                                            res.send({status: 'success', customer: customer});
+                                            res.send({status: 'success', verification_id: saved._id});
                                         } else {
                                             logger.info('Error while creating verification object: ' + err);
                                         }
@@ -266,13 +266,76 @@ registerNewUser = function (req, res) {
                                 }
 
                             });
-                            
+
                         } else {
                             console.log("customer not updated");
                         }
                     });
                 }
             });
+        }
+    });
+};
+// Resend OTP Service
+resendOtp = function (req, res) {
+    var code = common.generateRandomNumber(100000, 999999);
+    var mobileNumber = req.body.contact;
+    var verify = new Verification({
+        primary_contact: req.body.contact,
+        verification_code: code,
+        type: "mobile",
+        created: moment()
+    });
+    Verification.findOne({primary_contact: req.body.contact}, function (err, verified) {
+        if (verified) {
+            Verification.update({primary_contact: req.body.contact}, {verification_code: code}, function (err, updated) {
+                if (updated) {
+                    Customer.findOne({"contact.primary_contact.contact_no": mobileNumber}, function (err, customer) {
+                        if (customer) {
+
+                            utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
+                                if (err) {
+                                    logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
+                                } else {
+                                    logger.info('Successfully sent verification code');
+                                }
+                            });
+                            res.send({status: "success", verification_id: updated._id});
+                        } else {
+                            res.send({status:"failed",message:"customer not found"});
+                        }
+                    });
+                } else {
+                    console.log("not updated");
+                }
+            });
+        } else if (!verified) {
+            verify.save(function (err, saved) {
+                if (saved) {
+                    Customer.findOne({"contact.primary_contact.contact_no": saved.primary_contact}, function (err, customer) {
+                        if (customer) {
+                            utils.sendSMS(mobileNumber, 'Dear ' + customer.first_name + ' Your OTP ' + verify.verification_code + '' + ' www.VIAETRUCK.com', function (err, result) {
+                                if (err) {
+                                    logger.error(new verror(err, 'Error in sending verification code to ' + mobileNumber));
+                                } else {
+                                    logger.info('Successfully sent verification code');
+                                }
+                            });
+                            res.send({status: "success", verification_id: saved._id});
+                        }
+                        else{
+                            res.send({status:"failure",message:"customer not found"});
+                        }
+
+                    });
+
+
+                } else {
+                    console.log("failed to save verification code");
+                }
+            });
+        } else {
+            console.log(err);
         }
     });
 };
@@ -393,6 +456,7 @@ getAuthDetail = function (req, res)
 
 module.exports.route = function (router) {
     router.post('/customer', registerNewUser);
+    router.post('/otp/resend',resendOtp);
     router.get('/customers', getAllUsers);
     router.get('/customer/:id', getUserById);
     router.post('/modifycustomer', authenticate, modifyUser);
