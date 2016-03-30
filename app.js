@@ -12,7 +12,6 @@ var routes = require('./routes');
 var logger = require('./lib/logger');
 var session      = require('express-session');
 var flash    = require('connect-flash');
-var oauth = require('oauth2-facebook');
 var request = require('request');
 
 

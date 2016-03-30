@@ -105,7 +105,7 @@ bookQuote = function (req, res) {
                                     if (updated) {
                                         console.log("updated");
                                         //console.log(booked._id);
-                                        res.send({status: "success", quote:booked._id});
+                                        res.send({status: "success", booking:booked._id});
                                     } else {
                                         res.send({status: "failure", message: "quote generation failed"});
                                     }
